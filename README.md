@@ -1,4 +1,4 @@
-#Peenga
+
 Built using the [Love framework](http://love2d.org/) for Lua.
 A very simple Pong-style game, featuring [General Geega's](https://www.twitch.tv/generalgeega) smaller form: Weega.
 
