@@ -1,7 +1,7 @@
 Ball = Entity:extend()
 local ball_origin_x, ball_origin_y = love.graphics.getDimensions()
 
---accepts a string representing the path to an image file
+--defaults to basic ball if no image is supplied
 function Ball:new(image)
     if image ~= nil then
         self.image = image
@@ -13,12 +13,19 @@ function Ball:new(image)
     end
 
     Ball.super.new(self, ball_origin_x / 2 , ball_origin_y / 2, width, height)
+
+--[[     if math.random(1, 2) == 1 then
+        self.yspeed = 500
+    else
+        self.yspeed = -500
+    end ]]
     self.yspeed = -500
     if math.random(1, 2) == 1 then
         self.xspeed = 400
     else
         self.xspeed = -400
     end
+
     self.timer = 1
 end
 
@@ -40,8 +47,17 @@ function Ball:draw()
 end
 
 function Ball:getPosition()
+    x = self.x - self.width / 2
+    return x
+end
+
+function Ball:getHeight()
     y = self.y - self.height / 2
     return y
+end
+
+function Ball:getSpeed()
+    return self.yspeed
 end
 
 function Ball:bounce(e, sound)
@@ -70,4 +86,5 @@ function Ball:bounce(e, sound)
             return 'right'
         end
     end
+
 end

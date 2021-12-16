@@ -7,7 +7,7 @@ function love.load()
     require 'rightpad'
     require 'sound'
     
-    love.window.setTitle('Peenga')
+    love.window.setTitle('Weega-Pong')
     game = Game()
 end
 

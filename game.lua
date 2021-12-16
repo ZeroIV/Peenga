@@ -7,7 +7,7 @@ function Game:new()
     self.padLeft = Pad()
     self.padLeft.keyUp = 'w'
     self.padLeft.keyDown = 's'
-    self.padRight = PadRight()
+    self.padRight = PadRight(1)
     self.padRight.x = 740
     self.ball = Ball(ballImage)
 
@@ -16,8 +16,9 @@ function Game:new()
 end
 
 function Game:update(dt)
+
     self.padLeft:update(dt)
-    self.padRight:update(self.ball.y,dt)
+    self.padRight:update(self.ball:getHeight(), self.ball:getPosition(),self.ball:getSpeed() ,dt)
     self.ball:update(dt)
     self.ball:bounce(self.padLeft, popSound)
     self.ball:bounce(self.padRight, popSound)
