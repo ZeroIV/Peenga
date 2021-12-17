@@ -1,5 +1,4 @@
 Ball = Entity:extend()
-local ball_origin_x, ball_origin_y = love.graphics.getDimensions()
 
 --defaults to basic ball if no image is supplied
 function Ball:new(image)
@@ -12,7 +11,7 @@ function Ball:new(image)
         height = 15
     end
 
-    Ball.super.new(self, ball_origin_x / 2 , ball_origin_y / 2, width, height)
+    Ball.super.new(self, window_width / 2 , window_height / 2, width, height)
 
 --[[     if math.random(1, 2) == 1 then
         self.yspeed = 500
@@ -82,7 +81,7 @@ function Ball:bounce(e, sound)
     function Ball:getOutOfBounds()
         if self.x + self.width < 0  then
             return 'left'
-        elseif self.x > ball_origin_x then
+        elseif self.x > window_width then
             return 'right'
         end
     end
