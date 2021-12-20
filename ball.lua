@@ -11,14 +11,16 @@ function Ball:new(image)
         height = 15
     end
 
-    Ball.super.new(self, window_width / 2 , window_height / 2, width, height)
+    Ball.super.new(self, WINDOW_WIDTH / 2 , WINDOW_HEIGHT / 2, width, height)
 
---[[     if math.random(1, 2) == 1 then
-        self.yspeed = 500
-    else
-        self.yspeed = -500
-    end ]]
+    -- if math.random(1, 2) == 1 then
+    --     self.yspeed = 500
+    -- else
+    --     self.yspeed = -500
+    -- end
+
     self.yspeed = -500
+
     if math.random(1, 2) == 1 then
         self.xspeed = 400
     else
@@ -81,7 +83,7 @@ function Ball:bounce(e, sound)
     function Ball:getOutOfBounds()
         if self.x + self.width < 0  then
             return 'left'
-        elseif self.x > window_width then
+        elseif self.x > WINDOW_WIDTH then
             return 'right'
         end
     end

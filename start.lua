@@ -1,50 +1,56 @@
 Start = Object:extend()
 
-local startBalls = {}
-
-window_width, window_height = love.graphics.getDimensions()
+--container for start screen background objects
+local start_Balls = {}
 
 function Start:new(x)
-    xMenuOrigin = window_width * 0.50
-    yMenuOrigin = window_height * 0.75
-    options = {[1] = "Start",[2] = "Quit"}
 
+    --populate container with ball entities
     for i = 1, x, 1 do
-        startBalls[i] = Ball(ballImage)
-        startBalls[i].x = math.random(10,window_width-10)
-        startBalls[i].y = math.random(10,window_height-10)
+        start_Balls[i] = Ball(ballImage)
+        start_Balls[i].x = math.random(10,WINDOW_WIDTH-10)
+        start_Balls[i].y = math.random(10,WINDOW_HEIGHT-10)
         if math.random(1,2) == 2 then
-            startBalls[i].xspeed = -400
+            start_Balls[i].xspeed = -400
         else
-            startBalls[i].xspeed = 400
+            start_Balls[i].xspeed = 400
         end
         if math.random(1,2) == 2 then
-            startBalls[i].yspeed = -400
+            start_Balls[i].yspeed = -400
         else
-            startBalls[i].yspeed = 400
+            start_Balls[i].yspeed = 400
         end
-        startBalls[i].timer = 0
+        start_Balls[i].timer = 0
     end
 end
 
 function Start:update(dt)
-    for i, Ball in ipairs(startBalls) do
+    
+    for i, Ball in ipairs(start_Balls) do
         Ball:update(dt)
-        if startBalls[i].x <= 0 then
-            startBalls[i].xspeed = -(startBalls[i].xspeed)
-        elseif startBalls[i].x + startBalls[i].width >= window_width then
-            startBalls[i].xspeed = -(startBalls[i].xspeed)
+        if start_Balls[i].x <= 0 then
+            start_Balls[i].xspeed = -(start_Balls[i].xspeed)
+        elseif start_Balls[i].x + start_Balls[i].width >= WINDOW_WIDTH then
+            start_Balls[i].xspeed = -(start_Balls[i].xspeed)
         end
     end
+
 end
 
+-- function Start:keypressed(key)
+--     local i = 1
+--     if key == 'up' and i > 1 then
+--         i = i - 1
+--     elseif key == 'down' and i < 2 then
+--         i = i + 1
+--     end
+--     self.user_Selection = i
+-- end
+
 function Start:draw()
-    for i, Ball in ipairs(startBalls) do
+
+    for i, Ball in ipairs(start_Balls) do
         Ball:draw()
-    end
-    love.graphics.print('Weega-Pong', window_width * 0.3 , 100, 0, 4,4)
-    for i = 1, #options, 1 do
-        love.graphics.print(options[i], xMenuOrigin, yMenuOrigin + (50 * (i-1)), 0 , 1, 1.5)
     end
 
 end

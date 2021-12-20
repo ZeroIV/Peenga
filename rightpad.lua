@@ -1,11 +1,11 @@
 PadRight = Entity:extend()
 
 function PadRight:new(difficulty)
-    PadRight.super.new(self, 50 , window_height / 2, 10, 100)
+    PadRight.super.new(self, 50 , WINDOW_HEIGHT / 2, 10, 100)
     
-    SHORTDISTANCE = window_width * 0.25
-    MEDIUMDISTANCE = window_width * 0.50
-    LONGDISTANCE = window_width * 0.50
+    SHORTDISTANCE = WINDOW_WIDTH * 0.25
+    MEDIUMDISTANCE = WINDOW_WIDTH * 0.50
+    LONGDISTANCE = WINDOW_WIDTH * 0.50
 
     if difficulty == 1 then
         BASESPEED = 500
@@ -46,8 +46,8 @@ function PadRight:update(ballHeight,ballPosition, ballSpeed, dt)
             elseif ballHeight > (self.y + self.height) then --lower than paddle
                 self.yspeed = BASESPEED
             end    
-        elseif yballSpeed > 0 then                               --ball moving down
-            if ballHeight < (self.y - 15) then --higher than paddle
+        elseif yballSpeed > 0 then                          --ball moving down
+            if ballHeight < (self.y - 15) then              --higher than paddle
                 self.yspeed = -BASESPEED
             elseif ballHeight > (self.y + self.height + 15) then      --lower than paddle
                 self.yspeed = BASESPEED

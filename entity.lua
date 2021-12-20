@@ -1,5 +1,5 @@
 Entity = Object:extend()
-window_width, window_height = love.graphics.getDimensions()
+WINDOW_WIDTH, WINDOW_HEIGHT = love.graphics.getDimensions()
 
 function Entity:new(x, y, width, height)
     self.x = x
@@ -17,8 +17,8 @@ function Entity:update(dt)
     if self.y <= 0 then
         self.y = 0
         self.yspeed = -self.yspeed
-    elseif self.y + self.height >= window_height then
-        self.y = window_height - self.height
+    elseif self.y + self.height >= WINDOW_HEIGHT then
+        self.y = WINDOW_HEIGHT - self.height
         self.yspeed = -self.yspeed
     end
 

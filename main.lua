@@ -1,8 +1,8 @@
 function love.load()
     Object = require 'classic'
     require 'game'
-    require 'start'
     require 'entity'
+    require 'start'
     require 'pad'
     require 'ball'
     require 'rightpad'
@@ -17,8 +17,8 @@ function love.update(dt)
     game:update(dt)
 end
 
-function love.keypressed(key)
-    game:keypressed(key)
+function love.keypressed(key, scancode, isrepeat)
+    game:keypressed(key, isrepeat)
 end
 
 function love.draw()
