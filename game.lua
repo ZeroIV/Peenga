@@ -1,13 +1,14 @@
 Game = Object:extend()
 
+WINDOW_WIDTH, WINDOW_HEIGHT = love.graphics.getDimensions()
+
 function Game:new()
 
     ballImage = love.graphics.newImage('images/weega_smol.png')
-    bonkSound = Sound('sounds/klonk.mp3')
-    popSound = Sound('sounds/pop.mp3')
-
-    xMenuOrigin = (WINDOW_WIDTH / 2) - 50
-    yMenuOrigin = WINDOW_HEIGHT / 2
+    bonkSound = Sound('sounds/klonk.mp3', 0.5)
+    popSound = Sound('sounds/pop.mp3', 0.5)
+    menuMusic = Sound('sounds/Space-Cat.mp3', 0.5)
+    menuMusic:playSound(true)
     
     gameTitle = love.graphics.newText(gameFont, 'Weega-Pong')
     startOne = love.graphics.newText(gameFont,'1-player')
@@ -29,9 +30,10 @@ function Game:new()
     self.scoreLeft = 0
     self.scoreRight = 0
 
-    --game should start
+    --has user made a selection?
     self.startGame = false
 
+    self.buffer = 0
 end
 
 --initializes game settings based on userSelection value
@@ -41,12 +43,12 @@ function Game:setOptions()
     self.padLeft.keyDown = 's'
 
     if self.userSelection == 1 then
-        self.padRight = PadRight(1)
-        self.padRight.x = 740
+        self.padRight = Pad_Brain(1)
     else
         self.padRight = Pad()
         self.padRight.x = 740
     end
+    menuMusic:stopSound()
 end
 
 function Game:update(dt)
@@ -57,15 +59,23 @@ function Game:update(dt)
         self.padLeft:update(dt)
 
         if self.userSelection == 1 then --right pad is program controlled
-            self.padRight:update(self.ball:getHeight(), self.ball:getPosition(),self.ball:getSpeed(), dt)
+            self.padRight:update(self.ball:getXCoordinate(), self.ball:getYCoordinate(), self.ball:getYSpeed(), dt)
         else
             self.padRight:update(dt)
         end
 
         self.ball:update(dt)
-        self.ball:bounce(self.padLeft, popSound)
-        self.ball:bounce(self.padRight, popSound)
-        
+
+        --buffer is used to prevent instances where the ball would "stick" to a pad
+        --prevents further bounces from occuring in a short period of time
+        if self.buffer <= 0 then
+            if (self.ball:bounce(self.padLeft, popSound) or self.ball:bounce(self.padRight, popSound)) then
+                self.buffer = 1
+            end
+        elseif self.buffer > 0 then
+            self.buffer = self.buffer - dt
+        end
+
         --track score
         local ball_status = self.ball:getOutOfBounds()
 
@@ -83,6 +93,12 @@ end
 
 function Game:keypressed(key)
 
+    if key == 'kp+' then
+        Sound:raiseVolume()
+    elseif key == 'kp-' then
+        Sound:lowerVolume()
+    end
+
     if not self.startGame then
 
         if self.userSelection > 1 and (key == 'up' or key == 'w') then
@@ -91,7 +107,7 @@ function Game:keypressed(key)
             self.userSelection = self.userSelection + 1
         end
 
-        if key == 'space' then
+        if key == 'space' or key == 'return' then
             if self.userSelection == 1 or self.userSelection == 2 then
                 self:setOptions()
                 self.startGame = true
@@ -99,7 +115,6 @@ function Game:keypressed(key)
                 love.event.quit()
             end
         end
-
     end
 
     --immediately exits the program
@@ -112,23 +127,29 @@ function Game:draw()
 
     if not self.startGame then
         self.start.draw()
-        love.graphics.draw(gameTitle, WINDOW_WIDTH * 0.35 , 100, 0, 3,3)
+        local xMenuOrigin = (WINDOW_WIDTH * 0.35)
+        local yMenuOrigin = WINDOW_HEIGHT / 2
+        local ymenuItemOffset = 50
+        local xBorder = 10
+
+        love.graphics.draw(gameTitle, xMenuOrigin , 100, 0, 3,3)
 
         for k, v in pairs(menuOptions) do
-            love.graphics.draw(menuOptions[k], xMenuOrigin, yMenuOrigin + (50 * (k-1)), 0 , 3, 2)
+            love.graphics.draw(menuOptions[k], xMenuOrigin, yMenuOrigin + (ymenuItemOffset * (k-1)), 0 , 3, 2)
         end
 
-        --displays which option is currently selected
+        --displays which item is currently selected
         if self.userSelection == 1 then
-            love.graphics.rectangle('line', xMenuOrigin -10, yMenuOrigin, startOne:getWidth() * 3 + 20, startOne:getHeight() * 2 + 5)
+            love.graphics.rectangle('line', xMenuOrigin - xBorder, yMenuOrigin, startOne:getWidth() * 3 + (xBorder * 2), startOne:getHeight() * 2 + 5)
         end
         if self.userSelection == 2 then
-            love.graphics.rectangle('line', xMenuOrigin -10, yMenuOrigin + 50, startTwo:getWidth() * 3 + 20, startTwo:getHeight() * 2 + 5)
+            love.graphics.rectangle('line', xMenuOrigin - xBorder, yMenuOrigin + ymenuItemOffset, startTwo:getWidth() * 3 + (xBorder * 2), startTwo:getHeight() * 2 + 5)
         end
         if self.userSelection == 3 then
-            love.graphics.rectangle('line', xMenuOrigin -10, yMenuOrigin + 100, menuQuit:getWidth() * 3 + 20, menuQuit:getHeight() * 2 + 5)
+            love.graphics.rectangle('line', xMenuOrigin - xBorder, yMenuOrigin + ymenuItemOffset * 2, menuQuit:getWidth() * 3 + (xBorder * 2), menuQuit:getHeight() * 2 + 5)
         end
 
+        love.graphics.print('Music:"Space-Cat" by WaxTerk on Newgrounds.com', 10, 580, 0, 1, 1)
     else
         self.padLeft:draw()
         self.padRight:draw()

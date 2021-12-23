@@ -5,7 +5,7 @@ function love.load()
     require 'start'
     require 'pad'
     require 'ball'
-    require 'rightpad'
+    require 'pad_brain'
     require 'sound'
     
     love.window.setTitle('Weega-Pong')

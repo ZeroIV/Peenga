@@ -1,5 +1,5 @@
 Entity = Object:extend()
-WINDOW_WIDTH, WINDOW_HEIGHT = love.graphics.getDimensions()
+
 
 function Entity:new(x, y, width, height)
     self.x = x

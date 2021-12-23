@@ -41,24 +41,28 @@ end
 
 function Ball:draw()
     if self.image ~= nil then
-        love.graphics.draw(self.image,self.x,self.y, math.rad(0), 1, 1, self.width / 2, self.height / 2)
+        love.graphics.draw(self.image,self.x,self.y, 0, 1, 1)
     else
         love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
     end
 end
 
-function Ball:getPosition()
-    x = self.x - self.width / 2
+function Ball:getXCoordinate()
+    x = self.x + self.width / 2
     return x
 end
 
-function Ball:getHeight()
-    y = self.y - self.height / 2
+function Ball:getYCoordinate()
+    y = self.y + self.height / 2
     return y
 end
 
-function Ball:getSpeed()
+function Ball:getYSpeed()
     return self.yspeed
+end
+
+function Ball:getXSpeed()
+    return self.xspeed
 end
 
 function Ball:bounce(e, sound)
@@ -72,20 +76,20 @@ function Ball:bounce(e, sound)
     local top2 = e.y
     local bottom2 = e.y + e.height
 
-
-    if left1 < right2 and right1 > left2 and top1 < bottom2 and bottom1 > top2 then
+    if left1 <= right2 and right1 >= left2 and top1 <= bottom2 and bottom1 >= top2 then
         self.xspeed = -self.xspeed
-        -- if sound ~=nil then  --play sound when ball hits paddle
-        --     sound:playSound()
-        -- end
-    end
-
-    function Ball:getOutOfBounds()
-        if self.x + self.width < 0  then
-            return 'left'
-        elseif self.x > WINDOW_WIDTH then
-            return 'right'
+        if sound ~=nil then  --play sound when ball hits paddle
+            sound:playSound()
         end
+        return true
     end
+    return false
+end
 
+function Ball:getOutOfBounds()
+    if self.x + self.width < 0  then
+        return 'left'
+    elseif self.x > WINDOW_WIDTH then
+        return 'right'
+    end
 end
