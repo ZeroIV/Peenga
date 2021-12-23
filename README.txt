@@ -1,9 +1,11 @@
-Weega-pong_v2.0 Readme
+Weega-pong_v2.5.0 Readme
+
+Menu music: "Space-Cat" by WaxTerK (https://waxterk.newgrounds.com/)
 
 Menu controls:
     "w" or "up" = move selection up
     "s" or "down" = move selection down
-    "space" = confirm selection
+    "space" or "enter" = confirm selection
 
 Game controls:
     "w" = left (player 1) paddle up
@@ -13,3 +15,6 @@ Game controls:
 
 Other controls:
     "esc" = exit program
+
+    "num+" = raise master volume by 10%
+    "num-" = lower master volume by 10%
