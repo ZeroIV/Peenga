@@ -65,7 +65,7 @@ function Ball:getXSpeed()
     return self.xspeed
 end
 
-function Ball:bounce(e, sound)
+function Ball:bounce(e, sounds)
     local left1 = self.x
     local right1 = self.x + self.width
     local top1 = self.y
@@ -78,8 +78,9 @@ function Ball:bounce(e, sound)
 
     if left1 <= right2 and right1 >= left2 and top1 <= bottom2 and bottom1 >= top2 then
         self.xspeed = -self.xspeed
-        if sound ~=nil then  --play sound when ball hits paddle
-            sound:playSound()
+        if sounds ~=nil then  --play a random sound when ball hits paddle
+            local i = math.random(#sounds)
+            sounds[i]:playSound()
         end
         return true
     end

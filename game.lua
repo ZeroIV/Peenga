@@ -1,12 +1,23 @@
 Game = Object:extend()
 
 WINDOW_WIDTH, WINDOW_HEIGHT = love.graphics.getDimensions()
-
+local score_to_win = 10
 function Game:new()
-
+    winner = nil
     ballImage = love.graphics.newImage('images/weega_smol.png')
-    bonkSound = Sound('sounds/klonk.mp3', 0.5)
-    popSound = Sound('sounds/pop.mp3', 0.5)
+    self.scoreSounds = { 
+        [1] = Sound('sounds/score/geeg_noice.mp3'),
+        [2] = Sound('sounds/score/geeg_ohoho.mp3'),
+        [3] = Sound('sounds/score/geeg_sick-nasty.mp3'),
+        [4] = Sound('sounds/bounce/geeg_extreme-uhoh.mp3') }
+
+    self.bounceSounds = { 
+        [1] = Sound('sounds/bounce/geeg_oah.mp3', 0.75),
+        [2] = Sound('sounds/bounce/geeg_extreme-ooh.mp3', 0.75),
+        [3] = Sound('sounds/bounce/geeg_augh.mp3', 0.75) }
+
+    self.winTrack = Sound('sounds/geeg_win-cream-mix.mp3')
+    
     menuMusic = Sound('sounds/Space-Cat.mp3', 0.5)
     menuMusic:playSound(true)
     
@@ -21,6 +32,9 @@ function Game:new()
         [3] = menuQuit
     }
 
+    --should game start?
+    self.startGame = false
+
     --initialize start screen
     self.start = Start(10)
     self.userSelection = 1
@@ -29,11 +43,11 @@ function Game:new()
     self.ball = Ball(ballImage)
     self.scoreLeft = 0
     self.scoreRight = 0
-
-    --has user made a selection?
-    self.startGame = false
-
     self.buffer = 0
+
+    --initialize win screen
+    self.winScreen = Win()
+    self.winner = 0
 end
 
 --initializes game settings based on userSelection value
@@ -52,42 +66,67 @@ function Game:setOptions()
 end
 
 function Game:update(dt)
+        
+        self.start:update(dt)
+        if self.startGame then
+            if self.scoreLeft < score_to_win and self.scoreRight < score_to_win then
+                
+                self.padLeft:update(dt)
 
-    self.start:update(dt)
+                if self.userSelection == 1 then --right pad is program controlled
+                    self.padRight:update(self.ball:getXCoordinate(), self.ball:getYCoordinate(), self.ball:getYSpeed(), dt)
+                else
+                    self.padRight:update(dt)
+                end
 
-    if self.startGame then
-        self.padLeft:update(dt)
+                self.ball:update(dt)
 
-        if self.userSelection == 1 then --right pad is program controlled
-            self.padRight:update(self.ball:getXCoordinate(), self.ball:getYCoordinate(), self.ball:getYSpeed(), dt)
-        else
-            self.padRight:update(dt)
-        end
+                --buffer is used to prevent instances where the ball would "stick" to a pad
+                --prevents further bounces from occuring in a short period of time
+                if self.buffer <= 0 then
+                    if (self.ball:bounce(self.padLeft, self.bounceSounds) or self.ball:bounce(self.padRight, self.bounceSounds)) then
+                        self.buffer = 3
+                    end
+                elseif self.buffer > 0 then
+                    self.buffer = self.buffer - 1
+                end
 
-        self.ball:update(dt)
+                --track score
+                local ball_status = self.ball:getOutOfBounds()
 
-        --buffer is used to prevent instances where the ball would "stick" to a pad
-        --prevents further bounces from occuring in a short period of time
-        if self.buffer <= 0 then
-            if (self.ball:bounce(self.padLeft, popSound) or self.ball:bounce(self.padRight, popSound)) then
-                self.buffer = 1
+                if ball_status == 'left' then
+                    self.scoreRight = self.scoreRight + 1
+                    self.ball = Ball(ballImage)
+                    self:onScore(self.scoreSounds[4])
+                elseif ball_status == 'right' then
+                    self.scoreLeft = self.scoreLeft + 1
+                    self.ball = Ball(ballImage)
+                    self:onScore()
+                end
+            else
+                self.winScreen:update(dt)
             end
-        elseif self.buffer > 0 then
-            self.buffer = self.buffer - dt
         end
+end
 
-        --track score
-        local ball_status = self.ball:getOutOfBounds()
+--plays the supplied sound track. otherwise plays one randomly
+function Game:onScore(track)
 
-        if ball_status == 'left' then
-            self.scoreRight = self.scoreRight + 1
-            self.ball = Ball(ballImage)
-            bonkSound:playSound()
-        elseif ball_status == 'right' then
-            self.scoreLeft = self.scoreLeft + 1
-            self.ball = Ball(ballImage)
-            bonkSound:playSound()
-        end
+    if self.scoreLeft == score_to_win then
+        self.winScreen:setWinner(1)
+        self.winScreen:onWin(self.winTrack)
+        return
+    elseif self.scoreRight == score_to_win then
+        self.winScreen:setWinner(2)
+        self.winScreen:onWin(self.winTrack)
+        return
+    end
+
+    if not track then
+        local i = math.random(#self.scoreSounds - 1)
+        self.scoreSounds[i]:playSound()
+    else
+        track:playSound()
     end
 end
 
@@ -105,6 +144,7 @@ function Game:keypressed(key)
             self.userSelection = self.userSelection - 1
         elseif self.userSelection < 3 and (key == 'down' or key == 's') then
             self.userSelection = self.userSelection + 1
+            self.bounceSound:playSound()
         end
 
         if key == 'space' or key == 'return' then
@@ -151,10 +191,15 @@ function Game:draw()
 
         love.graphics.print('Music:"Space-Cat" by WaxTerk on Newgrounds.com', 10, 580, 0, 1, 1)
     else
+        if self.scoreLeft < score_to_win and self.scoreRight < score_to_win then
+            
         self.padLeft:draw()
         self.padRight:draw()
         self.ball:draw()
     
         love.graphics.print(self.scoreLeft .. ' - ' .. self.scoreRight, (WINDOW_WIDTH / 2 - 50), 20, 0, 3, 3)
+        else
+            self.winScreen:draw()
+        end
     end
 end

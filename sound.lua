@@ -1,11 +1,11 @@
 Sound = Object:extend()
 
-function Sound:new(source, x)
+function Sound:new(source, vol)
 	self.source = love.sound.newSoundData(source)
 	self.sound = love.audio.newSource(self.source)
 
-	if x then
-		self.sound:setVolume(x)
+	if vol then
+		self.sound:setVolume(vol)
 	end
 end
 

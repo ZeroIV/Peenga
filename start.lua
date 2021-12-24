@@ -37,16 +37,6 @@ function Start:update(dt)
 
 end
 
--- function Start:keypressed(key)
---     local i = 1
---     if key == 'up' and i > 1 then
---         i = i - 1
---     elseif key == 'down' and i < 2 then
---         i = i + 1
---     end
---     self.user_Selection = i
--- end
-
 function Start:draw()
 
     for i, Ball in ipairs(start_Balls) do

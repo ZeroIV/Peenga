@@ -3,6 +3,7 @@ function love.load()
     require 'game'
     require 'entity'
     require 'start'
+    require 'win_screen'
     require 'pad'
     require 'ball'
     require 'pad_brain'
