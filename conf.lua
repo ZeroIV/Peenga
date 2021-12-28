@@ -1,8 +1,8 @@
 --configuration file
 love.conf = function (t)
-    t.Identity = 'weega-pac'
+    t.Identity = 'weega-pong'
     t.joystick = false
     t.mouse = false
-    t.console = true
+    t.console = false
 end
 

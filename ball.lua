@@ -1,6 +1,6 @@
 Ball = Entity:extend()
 
---defaults to basic ball if no image is supplied
+--defaults to basic square if no image is supplied
 function Ball:new(image)
     if image ~= nil then
         self.image = image
@@ -12,12 +12,6 @@ function Ball:new(image)
     end
 
     Ball.super.new(self, WINDOW_WIDTH / 2 , WINDOW_HEIGHT / 2, width, height)
-
-    -- if math.random(1, 2) == 1 then
-    --     self.yspeed = 500
-    -- else
-    --     self.yspeed = -500
-    -- end
 
     self.yspeed = -500
 

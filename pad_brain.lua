@@ -1,17 +1,11 @@
 Pad_Brain = Entity:extend()
 
-function Pad_Brain:new(difficulty)
+function Pad_Brain:new()
     Pad_Brain.super.new(self, 740 , WINDOW_HEIGHT / 2, 10, 100)
     
     MEDIUMDISTANCE = WINDOW_WIDTH / 2 - 95
 
-    if difficulty == 1 then
-        BASESPEED = 500
-    elseif difficulty == 2 then
-        BASESPEED = 700
-    else
-        BASESPEED = 900
-    end
+    BASESPEED = 500
 end
 
 function Pad_Brain:update(ballXCoordinate, ballYCoordinate, ballYSpeed, dt)
