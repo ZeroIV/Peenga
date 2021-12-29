@@ -1,7 +1,7 @@
 Game = Object:extend()
 
 WINDOW_WIDTH, WINDOW_HEIGHT = love.graphics.getDimensions()
-local score_to_win = 1
+local score_to_win = 10
 
 function Game:new()
     self.scoreSounds = { 
